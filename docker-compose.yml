@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tienda-api
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - MONGODB_URI=mongodb://mongodb:27017/tienda-enlinea
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    networks:
+      - tienda-network
+
+  mongodb:
+    image: mongo:6
+    container_name: tienda-mongodb
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - tienda-network
+    restart: unless-stopped
+
+networks:
+  tienda-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
